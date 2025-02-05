@@ -136,7 +136,7 @@ FileCategorizer/
   Some PDFs may be corrupt or non-standard. These files are logged and skipped.
 
 - **Performance:**  
-  Files are processed in batches (default size 16) to maximize efficiency. Adjust the batch size in `ui.py` if necessary.
+  Files are processed in batches (default size 32) to maximize efficiency. Adjust the batch size in `ui.py` if necessary.
 
 - **GPU Warnings:**  
   If you see warnings about sequential pipeline usage on the GPU, consider using batch processing or fine-tuning your model parameters.
