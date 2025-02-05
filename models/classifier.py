@@ -25,3 +25,18 @@ class ClassifierEngine:
         except Exception as e:
             logging.error(f"Error classifying texts: {e}")
             return []
+
+    def optimize_pipeline_on_gpu(self):
+        try:
+            self.classifier.model.half().to('cuda')
+            logging.info("Pipeline optimized for GPU.")
+        except Exception as e:
+            logging.error(f"Error optimizing pipeline on GPU: {e}")
+
+    def classify_texts_in_batches(self, texts, batch_size=16):
+        results = []
+        for i in range(0, len(texts), batch_size):
+            batch_texts = texts[i:i + batch_size]
+            batch_results = self.classify_texts(batch_texts, batch_size=batch_size)
+            results.extend(batch_results)
+        return results
