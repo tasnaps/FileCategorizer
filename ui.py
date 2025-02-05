@@ -4,12 +4,26 @@ import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
 import pandas as pd
 import logging
-
+import unicodedata
+import re
+from datasets import Dataset
 from models.organizer import EbookOrganizer
 from models.classifier import ClassifierEngine
 from utility.prompt import build_prompt
 from config import CANDIDATE_LABELS_WITH_DESCRIPTIONS
 
+
+def normalize_text(text):
+    """
+    Normalize text by removing diacritics, converting to lowercase, and stripping out non-alphanumeric characters (except spaces).
+    """
+    # Normalize unicode (e.g., é -> e)
+    text = unicodedata.normalize('NFKD', text).encode('ASCII', 'ignore').decode('ASCII')
+    # Convert to lowercase and strip extra spaces.
+    text = text.lower().strip()
+    # Remove unwanted punctuation (you can adjust the regex as needed)
+    text = re.sub(r'[^\w\s]', '', text)
+    return text
 
 class OrganizerApp:
     def __init__(self, root):
@@ -135,6 +149,7 @@ class OrganizerApp:
         self.status_label.config(text="Starting...")
         threading.Thread(target=self.run_organizer, daemon=True).start()
 
+
     def run_organizer(self):
         """
         In custom mode, we use a candidate list containing only the desired category.
@@ -204,8 +219,6 @@ class OrganizerApp:
                     best_index, ratio = organizer.file_matcher.find_best_csv_match(file_key, organizer.csv_df,
                                                                                    threshold=0.6)
                     if best_index is None:
-                        logging.warning(
-                            f"No CSV match for file '{file_path}' (key: {file_key}, best ratio: {ratio:.2f}). Using file metadata only.")
                         prompt = file_key
                     else:
                         matched_row = organizer.csv_df.iloc[best_index]
@@ -234,33 +247,31 @@ class OrganizerApp:
             self.root.after(0, self.status_label.config, {"text": "Error occurred."})
             messagebox.showerror("Error", f"An error occurred: {e}")
 
-    def classify_and_move(self, prompts, file_paths, organizer, custom_label, threshold_val):
-        """
-        In custom mode, classify each prompt with only the custom label.
-        If the confidence is at or above threshold, move the file directly to the target directory.
-        Otherwise, do not move the file.
-        In normal mode, process as usual.
-        """
+    def classify_and_move(self, prompts, file_paths, organizer, candidate_labels, threshold_val):
         if self.use_custom_tag.get():
-            # Process each prompt individually using only the custom label.
+            # For custom mode, process each prompt individually if needed
             for i, prompt in enumerate(prompts):
                 results = organizer.classifier_engine.classifier(
                     prompt,
-                    candidate_labels=[custom_label],
+                    candidate_labels=candidate_labels,
                     multi_label=False
                 )
-                score_for_custom = results["scores"][0]
-                if score_for_custom >= threshold_val:
-                    logging.info(
-                        f"Custom tag confidence ({score_for_custom:.2f}) meets threshold for file: {file_paths[i]}")
-                    # Instead of creating a subfolder, move directly to target folder.
+                scores = results["scores"]
+                max_index = scores.index(max(scores))
+                max_score = scores[max_index]
+                selected_tag = candidate_labels[max_index]
+                if max_score >= threshold_val:
+                    predicted_category = selected_tag
+                    logging.info(f"Custom tag confidence ({max_score:.2f}) meets threshold for file: {file_paths[i]}")
                     organizer.file_organizer.move_file_direct(file_paths[i])
                     organizer.file_matcher.remove_file(file_paths[i])
                 else:
                     logging.info(
-                        f"Custom tag confidence ({score_for_custom:.2f}) below threshold for file: {file_paths[i]}. File not moved.")
+                        f"Custom tag confidence ({max_score:.2f}) below threshold for file: {file_paths[i]}. File not moved.")
         else:
-            results = organizer.classifier_engine.classify_texts(prompts, batch_size=len(prompts))
+            # Use the datasets library to process prompts in batches
+            dataset = Dataset.from_dict({"text": prompts})
+            results = organizer.classifier_engine.classify_texts(dataset["text"], batch_size=16)
             for i, res in enumerate(results):
                 predicted_category = res["labels"][0] if res["labels"][0] != "Unknown" else "Unknown"
                 organizer.file_organizer.move_file(file_paths[i], predicted_category)
