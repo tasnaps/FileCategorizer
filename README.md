@@ -4,6 +4,8 @@
 
 The Ebook Organizer Application is designed to streamline the organization of your ebook files by leveraging metadata exported from Calibre (in CSV format), file-based metadata extraction (from EPUBs and PDFs), and a zero-shot classification pipeline using Hugging Face's transformers. The application supports two primary modes:
 
+### Please note that the program goes through recursively all the folders in the target directory.
+
 1. **Predicted Genre Mode:**  
    Uses fuzzy matching of CSV metadata combined with file metadata to assign a genre automatically. Files are moved into subfolders based on the predicted genre.
 
@@ -50,8 +52,8 @@ A Tkinter-based graphical user interface (GUI) provides an easy way to configure
 1. **Clone the Repository:**
 
    ```bash
-   git clone https://github.com/yourusername/ebook-organizer.git
-   cd ebook-organizer
+   git clone https://github.com/tasnaps/FileCategorizer.git
+   cd FileCategorizer
    ```
 
 2. **Create and Activate a Virtual Environment:**
@@ -72,7 +74,7 @@ A Tkinter-based graphical user interface (GUI) provides an easy way to configure
 ## Directory Structure
 
 ```
-ebook_organizer/
+FileCategorizer/
 ├── config.py
 ├── main.py
 ├── README.md
