@@ -2,19 +2,19 @@
 
 ## Overview
 
-The Ebook Organizer Application is designed to streamline the organization of your ebook files by leveraging metadata exported from Calibre (in CSV format), file-based metadata extraction (from EPUBs and PDFs), and a zero-shot classification pipeline using Hugging Face's transformers. The application supports two primary modes:
-
-### Please note that the program goes through recursively all the folders in the target directory.
+The Ebook Organizer Application streamlines the organization of your ebook files by leveraging metadata exported from Calibre (in CSV format), file-based metadata extraction (from EPUBs and PDFs), and a zero-shot classification pipeline using Hugging Face's transformers. The application supports two primary modes:
 
 1. **Predicted Genre Mode:**  
-   Uses fuzzy matching of CSV metadata combined with file metadata to assign a genre automatically. Files are moved into subfolders based on the predicted genre.
+   Uses fuzzy matching of CSV metadata combined with file metadata to automatically assign a genre. Files are moved into subfolders based on the predicted genre.
 
 2. **Custom Classification Tag Mode:**  
-   Allows you to specify a custom genre (e.g., "Romance") and a confidence threshold via the GUI. When enabled, only files that meet or exceed the threshold for the custom tag are moved. In this mode, files that qualify are moved directly to the target directory (without creating a subfolder), and files that do not meet the threshold are left in place.
+   Allows you to specify a custom genre (e.g., "Romance") and a confidence threshold via the GUI. When enabled, only files that meet or exceed the threshold for the custom tag are moved directly into the target directory (without creating a subfolder). Files that do not meet the threshold remain in their original location.
 
 Additionally, you can choose to:
 - Use file metadata only (ignoring CSV data).
 - Organize by author name instead of genre.
+
+**Please note:** The program recursively processes all folders within the source directory.
 
 A Tkinter-based graphical user interface (GUI) provides an easy way to configure options, select folders and files, and monitor progress.
 
@@ -27,10 +27,10 @@ A Tkinter-based graphical user interface (GUI) provides an easy way to configure
   Matches file metadata with CSV data exported from Calibre using fuzzy string matching.
 
 - **Zero-Shot Classification:**  
-  Uses Hugging Face's `facebook/bart-large-mnli` model for genre classification. Supports batch processing for efficient GPU usage.
+  Uses Hugging Face's `facebook/bart-large-mnli` model for genre classification, with support for batch processing to maximize GPU efficiency.
 
 - **Custom Classification Tag Mode:**  
-  Allows you to override the default classification by specifying a custom genre and a confidence threshold. When the custom tag is enabled, only files that meet the threshold are moved directly to the target directory.
+  Allows you to override the default classification by specifying a custom genre and a confidence threshold. When enabled, only files that meet the threshold are moved directly to the target directory.
 
 - **User-Friendly GUI:**  
   A clean, organized Tkinter interface for selecting files, configuring options, and monitoring progress.
@@ -118,10 +118,10 @@ FileCategorizer/
      - **Organize by Author:** If checked, files are organized by the extracted author.
      - **Use Custom Classification Tag:** When checked, the following controls are enabled:
        - **Desired Category:** Enter the custom genre (e.g., "Romance").
-       - **Threshold (0-1):** Adjust the confidence threshold. Only files with a confidence score equal to or above this value for the custom tag will be moved directly to the target directory.
+       - **Threshold (0-1):** Adjust the confidence threshold. In custom mode, if a file’s confidence score for the custom tag is equal to or above the threshold, the file is moved directly to the target directory. Otherwise, the file remains in its original location.
        
    - **Start Organizing:**  
-     Click the "Start Organizing" button. The progress bar and status label will update as files are processed. In custom mode, if a file does not meet the threshold for the desired category, it will not be moved.
+     Click the "Start Organizing" button. The progress bar and status label will update as files are processed.
 
 3. **Logging and Debugging:**
    - The console displays debug information (including the generated classification prompts) and any errors or warnings during processing.
@@ -130,7 +130,7 @@ FileCategorizer/
 ## Troubleshooting
 
 - **Missing Logs:**  
-  Ensure that the logging level is set to INFO or lower and that no external libraries override your logging configuration.
+  Ensure the logging level is set to INFO or lower and that no external libraries override your logging configuration.
 
 - **PDF Extraction Errors:**  
   Some PDFs may be corrupt or non-standard. These files are logged and skipped.
@@ -139,7 +139,7 @@ FileCategorizer/
   Files are processed in batches (default size 16) to maximize efficiency. Adjust the batch size in `ui.py` if necessary.
 
 - **GPU Warnings:**  
-  If you see warnings about sequential pipeline usage on the GPU, consider using a batch approach or fine-tuning your model parameters.
+  If you see warnings about sequential pipeline usage on the GPU, consider using batch processing or fine-tuning your model parameters.
 
 ## Future Enhancements
 
