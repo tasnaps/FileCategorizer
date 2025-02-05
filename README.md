@@ -35,6 +35,9 @@ A Tkinter-based graphical user interface (GUI) provides an easy way to configure
 - **User-Friendly GUI:**  
   A clean, organized Tkinter interface for selecting files, configuring options, and monitoring progress.
 
+- **GPU Optimization:**  
+  Optimizes pipelines sequentially on GPU to enhance performance during batch processing.
+
 ## Requirements
 
 - **Python 3.x**
@@ -122,6 +125,9 @@ FileCategorizer/
        
    - **Start Organizing:**  
      Click the "Start Organizing" button. The progress bar and status label will update as files are processed.
+
+   - **GPU Optimization:**  
+     The application now includes GPU optimization for batch processing, ensuring efficient use of GPU resources.
 
 3. **Logging and Debugging:**
    - The console displays debug information (including the generated classification prompts) and any errors or warnings during processing.

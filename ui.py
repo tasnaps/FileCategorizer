@@ -271,7 +271,7 @@ class OrganizerApp:
         else:
             # Use the datasets library to process prompts in batches
             dataset = Dataset.from_dict({"text": prompts})
-            results = organizer.classifier_engine.classify_texts(dataset["text"], batch_size=16)
+            results = organizer.classifier_engine.classify_texts_in_batches(dataset["text"], batch_size=16)
             for i, res in enumerate(results):
                 predicted_category = res["labels"][0] if res["labels"][0] != "Unknown" else "Unknown"
                 organizer.file_organizer.move_file(file_paths[i], predicted_category)
