@@ -59,6 +59,25 @@ class FileOrganizer:
             except Exception as e:
                 logging.error(f"Error moving file '{os.path.basename(file_path)}': {e}")
 
+    def move_file_direct(self, file_path):
+        """
+        Moves the file directly into the target base folder without creating any subfolder.
+        """
+        target_path = os.path.join(self.target_base_folder, os.path.basename(file_path))
+        if os.path.exists(target_path):
+            dup_target_path = os.path.join(self.duplicates_folder, os.path.basename(file_path))
+            try:
+                shutil.move(file_path, dup_target_path)
+                logging.info(f"Duplicate detected: Moved '{os.path.basename(file_path)}' to duplicates folder.")
+            except Exception as e:
+                logging.error(f"Error moving duplicate '{os.path.basename(file_path)}': {e}")
+        else:
+            try:
+                shutil.move(file_path, target_path)
+                logging.info(f"Moved '{os.path.basename(file_path)}' directly to target folder.")
+            except Exception as e:
+                logging.error(f"Error moving file '{os.path.basename(file_path)}': {e}")
+
 
 class EbookOrganizer:
     def __init__(self, metadata_csv, source_folder, target_base_folder,
