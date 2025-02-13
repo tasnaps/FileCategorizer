@@ -1,5 +1,7 @@
 # Ebook Organizer Application (AI generated README)
 
+##WIP
+
 ## Overview
 
 The Ebook Organizer Application streamlines the organization of your ebook files by leveraging metadata exported from Calibre (in CSV format), file-based metadata extraction (from EPUBs and PDFs), and a zero-shot classification pipeline using Hugging Face's transformers. The application supports two primary modes:
