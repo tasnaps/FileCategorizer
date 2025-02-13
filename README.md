@@ -1,6 +1,4 @@
-# Ebook Organizer Application (AI generated README)
-
-## WIP
+# Ebook Organizer Application (AI generated README) WIP
 
 ## Overview
 
